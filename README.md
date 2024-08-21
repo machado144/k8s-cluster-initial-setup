@@ -73,6 +73,13 @@ tofu workspace select dev
 tofu plan -var-file=environments/dev.tfvars
 ```
 
+Now that our application is deployed, we can connect to the cluster and verify that it's working.
+
+```bash
+gcloud container clusters get-credentials $CLUSTER_NAME --zone us-central1-a --project $PROJECT_ID
+kubectl get pods
+```
+
 ### Step 3: Deploying Applications with ArgoCD
 
 ArgoCD is a tool to manage your applications using GitOps. To set up ArgoCD, follow these steps:
