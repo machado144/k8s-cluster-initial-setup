@@ -64,13 +64,14 @@ gsutil mb gs://[bucket-name-you-provided-on-envgsub-command]
 
 ### Step 2: Initialize Opentofu
 
-Initialize and set up the Opentofu workspace:
+Inside `iac` folder. Initialize and set up the Opentofu workspace:
 
 ```bash
 tofu init
 tofu workspace new dev
 tofu workspace select dev
 tofu plan -var-file=environments/dev.tfvars
+tofu apply -var-file=environments/dev.tfvars
 ```
 
 Now that our application is deployed, we can connect to the cluster and verify that it's working.
@@ -193,18 +194,32 @@ This section will guide you on deploying three example applications (`app1`, `ap
 
 This setup showcases Kubernetes' ability to manage internal service communication while selectively exposing services to external traffic.
 
+### Setup 
+
+First of all, we're going to need to have the `PROJECT_ID` and `INGRESS_IP` environment variables set.
+
+```bash
+export PROJECT_ID=[your-project-id]
+export INGRESS_IP=$(kubectl get svc -n ingress-nginx \
+  nginx-ingress-ingress-nginx-controller -o json \
+  | jq -r '.status.loadBalancer.ingress[0].ip')
+```
+
+Now we can proceed to deploy the applications.
+
 ### Deploying `app1`
 
 ```bash
 argocd app create app1 \
   --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
   --path apps/app-charts \
-  --values apps/app1/values.yaml \
+  --values ../app1/values.yaml \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace default \
   --name app1 \
   --sync-policy automated \
-  --helm-set "apps[0].ingress.host=app1.$INGRESS_IP.nip.io"
+  --helm-set "ingress.host=app1.$INGRESS_IP.nip.io" \
+  --helm-set "image=gcr.io/$PROJECT_ID/app1"
 ```
 
 ### Deploying `app2`
@@ -213,11 +228,12 @@ argocd app create app1 \
 argocd app create app2 \
   --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
   --path apps/app-charts \
-  --values apps/app2/values.yaml \
+  --values ../app2/values.yaml \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace default \
   --name app2 \
-  --sync-policy automated
+  --sync-policy automated \
+  --helm-set "image=gcr.io/$PROJECT_ID/app2"
 ```
 
 ### Deploying `app3`
@@ -226,13 +242,14 @@ argocd app create app2 \
 argocd app create app3 \
   --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
   --path apps/app-charts \
-  --values apps/app3/values.yaml \
+  --values ../app3/values.yaml \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace default \
   --name app3 \
-  --sync-policy automated
+  --sync-policy automated \
+  --helm-set "image=gcr.io/$PROJECT_ID/app3"
 ```
 
-By doing that, we're going to have the app1 exposed on app1.$INGRESS_IP.nip.io url.
+By doing that, we're going to have the app1 exposed on http://app1.$INGRESS_IP.nip.io/data url.
 
 Now you have a fully functioning Kubernetes cluster with automated deployments managed by ArgoCD!

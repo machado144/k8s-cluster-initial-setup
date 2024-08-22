@@ -1,14 +1,11 @@
-{{- range .Values.apps }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .name }}
+  name: {{ .Values.name }}
 spec:
   selector:
-    app: {{ .name }}
+    app: {{ .Values.name }}
   ports:
     - protocol: TCP
       port: 80
-      targetPort: {{ .port }}
----
-{{- end }}
+      targetPort: {{ .Values.port }}
