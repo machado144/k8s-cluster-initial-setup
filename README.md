@@ -180,4 +180,59 @@ Once deployed, you can access your application at:
 
 `http://podinfo.$INGRESS_IP.nip.io/`
 
+
+## Deploying an ArgoCD App Using Custom Helm Charts
+
+This section will guide you on deploying three example applications (`app1`, `app2`, and `app3`) using ArgoCD and custom Helm charts stored in the `apps/app-charts` directory.
+
+### Example Overview
+
+- **app1** is exposed to the internet and serves as the entry point for external requests.
+- **app1** makes internal API calls to **app2**.
+- **app2** in turn makes internal API calls to **app3**.
+
+This setup showcases Kubernetes' ability to manage internal service communication while selectively exposing services to external traffic.
+
+### Deploying `app1`
+
+```bash
+argocd app create app1 \
+  --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
+  --path apps/app-charts \
+  --values apps/app1/values.yaml \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --name app1 \
+  --sync-policy automated \
+  --helm-set "apps[0].ingress.host=app1.$INGRESS_IP.nip.io"
+```
+
+### Deploying `app2`
+
+```bash
+argocd app create app2 \
+  --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
+  --path apps/app-charts \
+  --values apps/app2/values.yaml \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --name app2 \
+  --sync-policy automated
+```
+
+### Deploying `app3`
+
+```bash
+argocd app create app3 \
+  --repo https://github.com/machado144/k8s-cluster-initial-setup.template \
+  --path apps/app-charts \
+  --values apps/app3/values.yaml \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --name app3 \
+  --sync-policy automated
+```
+
+By doing that, we're going to have the app1 exposed on app1.$INGRESS_IP.nip.io url.
+
 Now you have a fully functioning Kubernetes cluster with automated deployments managed by ArgoCD!

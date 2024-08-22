@@ -1,0 +1,14 @@
+apps:
+  - name: app3
+    replicas: 1
+    image: gcr.io/$PROJECT_ID/app3
+    port: 5000
+    ingress:
+      enabled: false
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
