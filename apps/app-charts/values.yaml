@@ -9,6 +9,8 @@ apps:
       className: nginx
       host: app1.$INGRESS_IP.nip.io
       serviceName: app1
+      path: /*
+      pathType: ImplementationSpecific
       servicePort: 80
       annotations:
         nginx.ingress.kubernetes.io/rewrite-target: /
