@@ -14,6 +14,10 @@ ingress:
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "app1.thinkingtab.com"
     kubernetes.io/ingress.class: "gce"
+secret:
+  enabled: true
+  secretName: external-dns-sa
+  target: secret-example
 
 autoscaling:
   enabled: true
