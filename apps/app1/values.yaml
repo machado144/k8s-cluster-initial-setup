@@ -5,14 +5,15 @@ port: 5000
 ingress:
   enabled: true
   name: app1-ingress
-  className: nginx
-  host: app1.$INGRESS_IP.nip.io
+  className: gce
+  host: app1.thinkingtab.com
   serviceName: app1
   path: /*
   pathType: ImplementationSpecific
   servicePort: 80
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    external-dns.alpha.kubernetes.io/hostname: "app1.thinkingtab.com"
+    kubernetes.io/ingress.class: "gce"
 
 autoscaling:
   enabled: true

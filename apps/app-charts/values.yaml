@@ -12,8 +12,8 @@ apps:
       path: /*
       pathType: ImplementationSpecific
       servicePort: 80
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
+      # annotations:
+        # nginx.ingress.kubernetes.io/rewrite-target: /
 
 autoscaling:
   enabled: false

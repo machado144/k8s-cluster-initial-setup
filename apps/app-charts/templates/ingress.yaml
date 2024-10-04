@@ -9,6 +9,11 @@ metadata:
     {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
+  defaultBackend:
+    service:
+      name: {{ .Values.ingress.serviceName }}
+      port:
+        number: {{ .Values.ingress.servicePort }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
