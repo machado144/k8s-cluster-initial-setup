@@ -15,6 +15,9 @@ apps:
       # annotations:
         # nginx.ingress.kubernetes.io/rewrite-target: /
 
+secret:
+  enabled: false
+
 autoscaling:
   enabled: false
   minReplicas: 1
